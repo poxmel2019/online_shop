@@ -49,7 +49,7 @@ app.put("/basket/detail/update",db.basketUpdate);
 app.delete("/basket/detail/delete",db.basketDelete);
 
 app.listen(port, ()=> {
-	console.log(`It works on port ${port}`);1
+	console.log(`It works on port ${port}`);
 })
 
 
