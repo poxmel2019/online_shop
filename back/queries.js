@@ -1,12 +1,13 @@
 const Pool = require('pg').Pool;
+const helpers = require("./_helpers.js")
 //const Pool = require('m').Pool;
 
 const pool = new Pool({
     user: "postgres",
     host: "localhost",
-    database: "online_shop",
-    //database: "erp_online",
-    password: "super",
+    //database: "online_shop",
+    database: "erp_online",
+    password: "postgres1",
     port: 5432,
 })
 
@@ -14,8 +15,9 @@ const pool = new Pool({
 const getCatalog = (request, response) => {
 
   pool.query(`select * from dict_view`, (error, results) => {
-    console.log("getProducts");
+    helpers.serverLog(results);
     if (error) {
+      helpers.serverLog(error);
       throw error
     }
     response.status(200).json(results.rows);
@@ -26,8 +28,9 @@ const getCatalog = (request, response) => {
 const getGoods = (request, response) => {
 
   pool.query(`select * from goods_view`, (error, results) => {
-    console.log("getProducts");
+    helpers.serverLog(results);
     if (error) {
+      helpers.serverLog(error);
       throw error
     }
     response.status(200).json(results.rows);
@@ -39,10 +42,11 @@ const getGoods = (request, response) => {
 const getGoodById = (request, response) => {
 
   const id = request.params.id; 
-  console.log(id);
+  
   pool.query(`select * from goods_view where id = ${id}`, (error, results) => {
-    console.log("getProducts");
+    helpers.serverLog(results);
     if (error) {
+      helpers.serverLog(error);
       throw error
     }
     response.status(200).json(results.rows);
@@ -53,7 +57,7 @@ const getGoodById = (request, response) => {
 const getBasketByClient = (request, response) => {
 
   const id = request.params.id; 
-  console.log(id);
+  
   pool.query(`
   select b.id, b.num, b.dato, b.client_id, cl.name client_name
     from basket b
@@ -62,7 +66,7 @@ const getBasketByClient = (request, response) => {
     where b.client_id = ${id}
   order by b.id;`, 
   (error, results) => {
-    console.log("getProducts");
+    //helpers.serverLog(results);
     if (error) {
       throw error
     }
@@ -94,7 +98,7 @@ where bd.basket_id = ${basketid}
 order by bd.id
  `, 
   (error, results) => {
-    console.log("getProducts");
+    //helpers.serverLog(results);
     if (error) {
       throw error
     }
@@ -104,15 +108,15 @@ order by bd.id
 }
 
 const createBasket = (request, response) => {
-  const {client, num} = request.body;
-
-  console.log(client);
-  console.log(num);
+  const client = request.body.client_id;
+  const num = request.body.num;
+  
   const query = num ? `insert into basket (client_id,num) values (${client},${num})` :  `insert into basket (client_id) values (${client})`;
 
   pool.query(query,(error,results) => {
+    helpers.serverLog(results);
     if (error) {
-      console.log(error)
+      helpers.serverLog(results);
       throw error;
     }
     response.status(200).json(results.rows);
@@ -128,8 +132,9 @@ const deleteBasket = (request, response) => {
   const query = `delete from basket where id = ${id}`;
 
   pool.query(query,(error,results) => {
+    helpers.serverLog(results)
     if (error) {
-      console.log(error)
+      helpers.serverLog(error)
       throw error;
     }
     response.status(200).json(results.rows);
@@ -162,8 +167,9 @@ const basketAdd = (request, response) => {
     ;
 
   pool.query(query,(error,results) => {
+    helpers.serverLog(results)
     if (error) {
-      console.log(error)
+      helpers.serverLog(error)
       throw error;
     }
     response.status(200).json(results.rows);
@@ -176,10 +182,10 @@ const basketDelete = (request, response) => {
   const {id} = request.body;
 
   const query = `delete from basket_detail where id = ${id}`;
-
+  helpers.serverLog(results)
   pool.query(query,(error,results) => {
     if (error) {
-      console.log(error)
+      helpers.serverLog(error)
       throw error;
     }
     response.status(200).json(results.rows);
@@ -192,8 +198,9 @@ const basketUpdate = (request, response) => {
   const query = `update basket_detail set units = ${units} where id = ${id}`;
 
   pool.query(query,(error,results) => {
+    helpers.serverLog(results)
     if (error) {
-      console.log(error)
+      helpers.serverLog(results)
       throw error;
     }
     response.status(200).json(results.rows);
